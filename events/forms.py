@@ -16,7 +16,6 @@ from django.core.exceptions import ValidationError
 from compat import reverse
 from django.db.models import Q
 from django.forms import ModelForm
-from django.forms.extras.widgets import SelectDateWidget
 from django.utils import timezone
 # python multithreading bug workaround
 from pagedown.widgets import PagedownWidget
@@ -90,19 +89,6 @@ def get_qs_from_event(event):
 
 
 # LNAdmin Forms
-class WorkorderSubmit(ModelForm):
-    class Meta:
-        model = Event
-        exclude = ('submitted_by', 'submitted_ip', 'approved', 'crew', 'crew_chief',
-                   'report', 'closed', 'payment_amount', 'paid')
-
-    def __init__(self, *args, **kwargs):
-        super(WorkorderSubmit, self).__init__(*args, **kwargs)
-        self.fields['datetime_setup_start'].widget = SelectDateWidget()
-        # self.fields['datetime_start'].widget = datetime()
-        # self.fields['datetime_end'].widget = datetime()
-
-
 class CrewAssign(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
