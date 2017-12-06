@@ -3,7 +3,7 @@ import datetime
 import logging
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.db import models
 from django.db.models import Q
 from django.utils.encoding import python_2_unicode_compatible

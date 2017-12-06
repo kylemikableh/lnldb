@@ -3,7 +3,7 @@ import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import InvalidPage, Paginator
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.db.models.aggregates import Count
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect

@@ -7,7 +7,7 @@ from django import forms
 # noinspection PyUnresolvedReferences
 from django.conf import settings
 # Create your models here.
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.db.models import Manager

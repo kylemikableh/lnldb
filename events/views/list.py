@@ -4,7 +4,7 @@ import re
 import pytz
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.db.models import Count, F, Q
 from django.shortcuts import render
 from django.utils.timezone import make_aware

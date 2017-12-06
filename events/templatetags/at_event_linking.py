@@ -3,7 +3,7 @@
 import re
 
 from django import template
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.template.defaultfilters import stringfilter
 
 from events.models import Event

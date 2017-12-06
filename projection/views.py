@@ -3,7 +3,7 @@ import datetime
 
 from crispy_forms.layout import Submit
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.db.models import Q
 from django.forms.formsets import formset_factory
 from django.http import HttpResponseRedirect

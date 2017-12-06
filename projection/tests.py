@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from compat import reverse
 from data.tests.util import ViewTestCase
 from django.contrib.auth.models import Permission
 from . import models

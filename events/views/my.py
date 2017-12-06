@@ -4,7 +4,7 @@ from itertools import chain
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.db.models.aggregates import Sum
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, HttpResponseRedirect

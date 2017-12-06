@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.template.defaultfilters import register
 from django.utils.html import conditional_escape, format_html
 from django.utils.safestring import mark_safe

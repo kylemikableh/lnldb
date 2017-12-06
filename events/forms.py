@@ -13,7 +13,7 @@ from crispy_forms.layout import (HTML, Div, Field, Fieldset, Hidden, Layout,
                                  Reset, Submit)
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.db.models import Q
 from django.forms import ModelForm
 from django.forms.extras.widgets import SelectDateWidget

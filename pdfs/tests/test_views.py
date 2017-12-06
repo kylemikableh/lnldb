@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from compat import reverse
 from django.test import TestCase
 
 from events.tests.generators import EventFactory, UserFactory
