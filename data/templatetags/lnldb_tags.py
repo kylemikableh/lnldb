@@ -2,6 +2,11 @@ from django import template
 from django.utils.timezone import localtime
 from django.conf import settings
 
+try:
+    basestring
+except NameError:
+    basestring = str  # py3
+
 register = template.Library()
 
 
