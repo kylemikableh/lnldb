@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^db/members/(?P<pk>[0-9]+)/set_password/$', views.PasswordSetView.as_view(), name="password"),
 
     url(r'^db/members/(?P<pk>[0-9]+)/', include(each_member_pattern)),
-    url(r'^db/members/(?P<username>[A-Za-z][A-Za-z0-9]*)/', include(each_member_pattern, namespace='by-name')),
+    url(r'^db/members/(?P<username>[A-Za-z][A-Za-z0-9]*)/', include((each_member_pattern, 'by-name'))),
 
     # AUTH
     # use the nice redirector for login
@@ -50,12 +50,12 @@ urlpatterns = [
     best_logout_url,
 
     # now for logical separation of the two auth portals
-    url(r'^cas/', include([
+    url(r'^cas/', include(([
         url(r'^login/$', django_cas_ng.views.login, name="login"),
         url(r'^logout/$', django_cas_ng.views.logout, name="logout"),
-    ], namespace="cas")),
+    ], "cas"))),
 
-    url(r'^local/', include([
+    url(r'^local/', include(([
         url(r'^login/$', auth_views.login,
             {'template_name': 'registration/login.html',
              'authentication_form': forms.LoginForm},
@@ -64,10 +64,10 @@ urlpatterns = [
         url(r'^logout/$', auth_views.logout,
             {'template_name': 'registration/logout.html'},
             name="logout"),
-    ], namespace="local")),
+    ], "local"))),
 
     # and keep password resets separate from either (though technically local)
-    url(r'^local/reset/', include([
+    url(r'^local/reset/', include(([
         url(r'^$', auth_views.password_reset,
             {'template_name': 'registration/reset_password.html',
              'post_reset_redirect': 'accounts:reset:sent',
@@ -83,6 +83,6 @@ urlpatterns = [
         url(r'^done/$', auth_views.password_reset_complete,
             {'template_name': 'registration/reset_password_finished.html'},
             name='done'),
-    ], namespace="reset")),
+    ], "reset"))),
 
 ]

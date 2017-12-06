@@ -57,19 +57,19 @@ urlpatterns = [
 
     # The nice url structure. TODO: fit the rest in here (with deprecation, of course)
     url(r'^view/(?P<event>[0-9]+)/', include([
-        url(r'^billing/', view=include([
+        url(r'^billing/', view=include(([
             url(r'^mk/$', flow_views.BillingCreate.as_view(), name="new"),
             url(r'^update/(?P<pk>[0-9]+)/$', flow_views.BillingUpdate.as_view(),
                 name="edit"),
             url(r'^rm/(?P<pk>[0-9]+)/$', flow_views.BillingDelete.as_view(),
                 name="remove"),
             url(r'^pdf/$', pdf_views.generate_event_bill_pdf, name="pdf"),
-        ], namespace="bills")),
-        url(r'^report/', view=include([
+        ], "bills"))),
+        url(r'^report/', view=include(([
             url(r'^mk/$', flow_views.CCRCreate.as_view(), name="new"),
             url(r'^update/(?P<pk>[0-9]+)/$', flow_views.CCRUpdate.as_view(),
                 name="edit"),
             url(r'^rm/(?P<pk>[0-9]+)/$', flow_views.CCRDelete.as_view(), name="remove")
-        ], namespace="reports")),
+        ], "reports"))),
     ]))
 ]
