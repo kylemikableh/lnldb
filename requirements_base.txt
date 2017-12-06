@@ -21,7 +21,8 @@ django-hijack==2.1.2
 django-ical==1.4
 django-lineage==0.2.0
 django-markdown-deux==1.0.5
-django-mptt==0.8.6
+#django-mptt==0.8.7 # waiting for >0.8.7 for django2 fixes
+-e git+https://github.com/django-mptt/django-mptt#egg=django-mptt
 django-multiupload==0.5
 django-natural-duration==0.1
 django-pagedown==0.1.3
