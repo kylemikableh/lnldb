@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from ..views import list as list_views, flow as flow_views, mkedrm as mkedrm_views
 from pdfs import views as pdf_views
 
-
+app_name = 'events'
 def generate_date_patterns(func, name):
     return include([
         url(r'^$', func, name=name),

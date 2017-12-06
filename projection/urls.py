@@ -4,6 +4,7 @@ from pdfs import views as pdf_views
 
 from . import views
 
+app_name = "projection"
 urlpatterns = [
     url(r'^list/$', views.plist_detail, name="grid"),
     url(r'^list/other/$', views.plist, name="list"),

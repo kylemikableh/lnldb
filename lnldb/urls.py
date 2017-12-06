@@ -30,7 +30,7 @@ urlpatterns = [
     # url(r'^lnldb/', include('lnldb.foo.urls', [namespace='foo'])),
 
     # Include other modules
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^hijack/', include('hijack.urls')),
     url(r'^__debug__/', include(debug_toolbar.urls)),

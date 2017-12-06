@@ -6,6 +6,7 @@ from . import views
 # Use include() liberally. A bit harder to read,
 #   but encourages consistency and you never
 #   have to rewrite a regex.
+app_name = "inventory"
 urlpatterns = [
     url(r'^$', views.view_all, name='view_all'),
 

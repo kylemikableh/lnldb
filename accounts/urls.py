@@ -6,6 +6,8 @@ import django_cas_ng.views
 
 from . import views, forms
 
+app_name = "accounts"
+
 each_member_pattern = [
     url(r'^edit/$', views.UserUpdateView.as_view(), name="update"),
     url(r'^detail/$', views.UserDetailView.as_view(), name="detail"),
