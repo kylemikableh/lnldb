@@ -22,11 +22,11 @@ logger = logging.getLogger(__name__)
 
 class EquipmentCategory(MPTTModel):
     name = models.CharField(max_length=64, blank=False, null=False)
-    usual_place = models.ForeignKey(Location, blank=True, null=True,
+    usual_place = models.ForeignKey(Location, blank=True, null=True, on_delete=models.SET_NULL,
                                     help_text="Default place for items of this category. "
                                               "Inherits from parent categories.")
 
-    parent = TreeForeignKey('self', null=True, blank=True,
+    parent = TreeForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL,
                             related_name='children', db_index=True,
                             help_text="If this is a subcategory, the parent is what this is a subcategory of. "
                                       "Choose '---' if not.")
@@ -101,15 +101,16 @@ class EquimentItemManager(TreeManager):
 
 class EquipmentItem(MPTTModel):
     objects = EquimentItemManager()
-    item_type = models.ForeignKey('EquipmentClass', related_name="items", null=False, blank=False)
+    item_type = models.ForeignKey('EquipmentClass', related_name="items", null=False, blank=False, on_delete=models.CASCADE)
     serial_number = models.CharField(max_length=190, null=True, blank=True)
-    case = TreeForeignKey('self', null=True, blank=True,
+    case = TreeForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL,
                           related_name='contents', db_index=True,
                           help_text="Case or item that contains this item")
 
     barcode = models.BigIntegerField(null=True, blank=True, unique=True)
     purchase_date = models.DateField(null=False, blank=True)
-    home = models.ForeignKey(Location, null=True, blank=True, help_text="Place where this item typically resides.")
+    home = models.ForeignKey(Location, null=True, blank=True, on_delete=models.SET_NULL,
+                             help_text="Place where this item typically resides.")
     features = models.CharField(max_length=128, null=True, blank=True, verbose_name='Identifying Features')
 
     def save(self, *args, **kwargs):
@@ -169,7 +170,7 @@ class EquipmentItem(MPTTModel):
 @python_2_unicode_compatible
 class EquipmentClass(models.Model):
     name = models.CharField(max_length=190)
-    category = TreeForeignKey(EquipmentCategory, null=False, blank=False)
+    category = TreeForeignKey(EquipmentCategory, null=False, blank=False, on_delete=models.SET_NULL)
     description = models.TextField(help_text="Function, appearance, and included acessories", null=True, blank=True)
     value = models.DecimalField(help_text="Estimated purchase value", max_digits=9, decimal_places=2,
                                 null=True, blank=True)
@@ -223,14 +224,14 @@ class EquipmentStatus(models.Model):
 class EquipmentMaintEntry(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.SET_NULL)
 
     title = models.CharField(max_length=32, null=False, blank=False)
     entry = models.TextField(null=True, blank=True)
 
-    equipment = models.ForeignKey(EquipmentItem, related_name='maintenance',
+    equipment = models.ForeignKey(EquipmentItem, related_name='maintenance', on_delete=models.CASCADE,
                                   null=False, blank=False)
-    status = models.ForeignKey(EquipmentStatus, null=False, blank=False)
+    status = models.ForeignKey(EquipmentStatus, null=False, blank=False, on_delete=models.PROTECT)
 
     def __str__(self):
         return str(self.date)

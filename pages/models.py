@@ -30,7 +30,7 @@ class Page(models.Model):
 class CarouselImg(models.Model):
     internal_name = models.CharField(max_length=64)
     img = models.ImageField(upload_to='carousel')
-    href = models.ForeignKey('Page', null=True, blank=True)
+    href = models.ForeignKey('Page', null=True, blank=True, on_delete=models.SET_NULL)
     href_words = models.CharField(max_length=64, null=True, blank=True)
     href_desc = models.CharField(max_length=128, null=True, blank=True)
 

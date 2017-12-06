@@ -232,7 +232,7 @@ class Location(models.Model):
     holds_equipment = models.BooleanField(default=False)
 
     #
-    building = models.ForeignKey(Building)
+    building = models.ForeignKey(Building, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -243,8 +243,8 @@ class Location(models.Model):
 
 class ExtraInstance(models.Model):
     """ An instance of a given extra attached to an event """
-    event = models.ForeignKey('Event')
-    extra = models.ForeignKey('Extra')
+    event = models.ForeignKey('Event', on_delete=models.CASCADE)
+    extra = models.ForeignKey('Extra', on_delete=models.PROTECT)
     quant = models.PositiveIntegerField()
 
     @property
@@ -263,7 +263,7 @@ class Extra(models.Model):
     cost = models.DecimalField(max_digits=8, decimal_places=2)
     desc = models.TextField()
     services = models.ManyToManyField('Service')
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('Category', on_delete=models.PROTECT)
     disappear = models.BooleanField(default=False, help_text="Disappear this extra instead of disable")
     checkbox = models.BooleanField(default=False, help_text="Use a checkbox instead of an integer entry")
 
@@ -297,7 +297,7 @@ class Service(models.Model):
     longname = models.CharField(max_length=64)
     base_cost = models.DecimalField(max_digits=8, decimal_places=2)
     addtl_cost = models.DecimalField(max_digits=8, decimal_places=2)
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('Category', on_delete=models.PROTECT)
 
     # for the workorder form. Nice And Pretty Descriptions
     help_desc = models.TextField(null=True, blank=True)
@@ -325,7 +325,7 @@ class Billing(models.Model):
     """
     date_billed = models.DateField()
     date_paid = models.DateField(null=True, blank=True)
-    event = models.ForeignKey('Event', related_name="billings")
+    event = models.ForeignKey('Event', related_name="billings", on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
 
     # bools
@@ -359,16 +359,18 @@ class Event(models.Model):
     objects = OptimizedEventManager()
     event_mg = EventManager()
 
-    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='submitter')
+    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='submitter', on_delete=models.PROTECT)
     submitted_ip = models.GenericIPAddressField(max_length=16)
     submitted_on = models.DateTimeField(auto_now_add=True, db_index=True)
 
     event_name = models.CharField(max_length=128, db_index=True)
     # Person
     person_name = models.CharField(max_length=128, null=True, blank=True, verbose_name="Contact_name")  # DEPRECATED
-    contact = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, verbose_name="Contact")
+    contact = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, verbose_name="Contact",
+                                on_delete=models.SET_NULL)
     org = models.ManyToManyField('Organization', blank=True, verbose_name="Client")
-    billing_org = models.ForeignKey('Organization', null=True, blank=True, related_name="billedevents")
+    billing_org = models.ForeignKey('Organization', null=True, blank=True, related_name="billedevents",
+                                    on_delete=models.SET_NULL)
     billing_fund = models.ForeignKey('Fund', null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name="event_accounts")
     contact_email = models.CharField(max_length=180, null=True, blank=True)  # DEPRECATED
@@ -383,12 +385,12 @@ class Event(models.Model):
     datetime_end = models.DateTimeField()
 
     # Location
-    location = models.ForeignKey('Location')
+    location = models.ForeignKey('Location', on_delete=models.PROTECT)
 
     # service levels
-    lighting = models.ForeignKey('Lighting', null=True, blank=True, related_name='lighting')
-    sound = models.ForeignKey('Sound', null=True, blank=True, related_name='sound')
-    projection = models.ForeignKey('Projection', null=True, blank=True, related_name='projection')
+    lighting = models.ForeignKey('Lighting', null=True, blank=True, related_name='lighting', on_delete=models.PROTECT)
+    sound = models.ForeignKey('Sound', null=True, blank=True, related_name='sound', on_delete=models.PROTECT)
+    projection = models.ForeignKey('Projection', null=True, blank=True, related_name='projection', on_delete=models.PROTECT)
 
     lighting_reqs = models.TextField(null=True, blank=True)
     sound_reqs = models.TextField(null=True, blank=True)
@@ -399,24 +401,24 @@ class Event(models.Model):
     # NOT SHOWN
     otherservices = models.ManyToManyField(Service, blank=True)
     otherservice_reqs = models.TextField(null=True, blank=True)
-    setup_location = models.ForeignKey('Location', related_name="setuplocation", null=True, blank=True)  # DEPRECATED
+    setup_location = models.ForeignKey('Location', related_name="setuplocation", null=True, blank=True, on_delete=models.SET_NULL)  # DEPRECATED
     # Status Indicators
     approved = models.BooleanField(default=False)
     approved_on = models.DateTimeField(null=True, blank=True)
-    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventapprovals", null=True, blank=True)
+    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventapprovals", null=True, blank=True, on_delete=models.SET_NULL)
 
     # billing reviews
     reviewed = models.BooleanField(default=False)
     reviewed_on = models.DateTimeField(null=True, blank=True)
-    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventbillingreview", null=True, blank=True)
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventbillingreview", null=True, blank=True, on_delete=models.SET_NULL)
 
     closed = models.BooleanField(default=False)
     closed_on = models.DateTimeField(null=True, blank=True)
-    closed_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventclosings", null=True, blank=True)
+    closed_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventclosings", null=True, blank=True, on_delete=models.SET_NULL)
 
     cancelled = models.BooleanField(default=False)
     cancelled_on = models.DateTimeField(null=True, blank=True)
-    cancelled_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventcancellations", null=True, blank=True)
+    cancelled_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="eventcancellations", null=True, blank=True, on_delete=models.SET_NULL)
     cancelled_reason = models.TextField(null=True, blank=True)
 
     payment_amount = models.IntegerField(blank=True, null=True, default=None)
@@ -885,8 +887,8 @@ class Event(models.Model):
 @python_2_unicode_compatible
 class CCReport(models.Model):
     glyphicon = 'comment'
-    crew_chief = models.ForeignKey(settings.AUTH_USER_MODEL)
-    event = models.ForeignKey(Event)
+    crew_chief = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     report = models.TextField(validators=[MinLengthValidator(20)])
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
@@ -959,7 +961,7 @@ class Organization(models.Model):  # AKA Client
 
     accounts = models.ManyToManyField(Fund, related_name='orgfunds')
 
-    user_in_charge = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orgowner')
+    user_in_charge = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orgowner', on_delete=models.PROTECT)
     associated_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='orgusers')
 
     associated_orgs = models.ManyToManyField("self", blank=True, verbose_name="Associated Clients")
@@ -1009,9 +1011,9 @@ class Organization(models.Model):  # AKA Client
 
 
 class OrganizationTransfer(models.Model):
-    new_user_in_charge = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="xfer_new")
-    old_user_in_charge = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="xfer_old")
-    org = models.ForeignKey(Organization)
+    new_user_in_charge = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="xfer_new", on_delete=models.CASCADE)
+    old_user_in_charge = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="xfer_old", on_delete=models.CASCADE)
+    org = models.ForeignKey(Organization, on_delete=models.CASCADE)
     uuid = models.UUIDField()  # for the link
     created = models.DateTimeField(auto_now=True)
     completed_on = models.DateTimeField(null=True, blank=True)
@@ -1028,9 +1030,9 @@ class OrganizationTransfer(models.Model):
 
 
 class OrgBillingVerificationEvent(models.Model):
-    org = models.ForeignKey(Organization, related_name="verifications")
+    org = models.ForeignKey(Organization, related_name="verifications", on_delete=models.CASCADE)
     date = models.DateField()
-    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="verification_events")
+    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="verification_events", on_delete=models.CASCADE)
     note = models.TextField(null=True, blank=True)
 
     class Meta:
@@ -1041,9 +1043,9 @@ class OrgBillingVerificationEvent(models.Model):
 # stats and the like
 @python_2_unicode_compatible
 class Hours(models.Model):
-    event = models.ForeignKey('Event', related_name="hours")
-    service = models.ForeignKey('Service', related_name="hours", null=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="hours")
+    event = models.ForeignKey('Event', related_name="hours", on_delete=models.CASCADE)
+    service = models.ForeignKey('Service', related_name="hours", null=True, blank=True, on_delete=models.SET_NULL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="hours", on_delete=models.CASCADE)
     hours = models.DecimalField(null=True, max_digits=7, decimal_places=2, blank=True)
 
     def __str__(self):
@@ -1056,12 +1058,12 @@ class Hours(models.Model):
 # this is the crewchief instance for a particular event
 class EventCCInstance(models.Model):
     # the pair
-    event = models.ForeignKey('Event', related_name="ccinstances")
-    crew_chief = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="ccinstances")
+    event = models.ForeignKey('Event', related_name="ccinstances", on_delete=models.CASCADE)
+    crew_chief = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="ccinstances", on_delete=models.CASCADE)
 
     # the service
-    service = models.ForeignKey(Service, related_name="ccinstances")
-    setup_location = models.ForeignKey(Location, related_name="ccinstances")
+    service = models.ForeignKey(Service, related_name="ccinstances", on_delete=models.PROTECT)
+    setup_location = models.ForeignKey(Location, related_name="ccinstances", on_delete=models.PROTECT)
     setup_start = models.DateTimeField(null=True, blank=True)
 
     def cal_name(self):
@@ -1103,8 +1105,8 @@ class EventCCInstance(models.Model):
 
 # A log of CC Report Reminders Sent
 class ReportReminder(models.Model):
-    event = models.ForeignKey('Event', related_name="ccreportreminders")
-    crew_chief = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="ccreportreminders")
+    event = models.ForeignKey('Event', related_name="ccreportreminders", on_delete=models.CASCADE)
+    crew_chief = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="ccreportreminders", on_delete=models.CASCADE)
     sent = models.DateTimeField(auto_now_add=True)
 
 
@@ -1114,7 +1116,7 @@ def attachment_file_name(instance, filename):
 
 
 class EventAttachment(models.Model):
-    event = models.ForeignKey('Event', related_name="attachments")
+    event = models.ForeignKey('Event', related_name="attachments", on_delete=models.CASCADE)
     for_service = models.ManyToManyField(Service, blank=True, related_name="attachments")
     attachment = models.FileField(upload_to=attachment_file_name)
     note = models.TextField(null=True, blank=True, default="")
@@ -1122,7 +1124,7 @@ class EventAttachment(models.Model):
 
 
 class EventArbitrary(models.Model):
-    event = models.ForeignKey('Event', related_name="arbitraryfees")
+    event = models.ForeignKey('Event', related_name="arbitraryfees", on_delete=models.CASCADE)
     key_name = models.CharField(max_length=64)
     key_value = models.DecimalField(max_digits=8, decimal_places=2)
     key_quantity = models.PositiveSmallIntegerField(default=1)
