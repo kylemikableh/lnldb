@@ -12,6 +12,7 @@ python:
 env:
     - DJANGO="Django<1.9>1.8"
     - DJANGO="Django<2>1.11"
+    - DJANGO="Django<2.1>2"
     - DJANGO="https://github.com/django/django/archive/master.tar.gz"
 
 install:
@@ -28,6 +29,8 @@ after_success:
 
 matrix:
     exclude:
+        - python: "2.7"
+          env: DJANGO="Django<2.1>2"
         - python: "2.7"
           env: DJANGO="https://github.com/django/django/archive/master.tar.gz"
     allow_failures:
