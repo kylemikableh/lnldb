@@ -221,7 +221,7 @@ DEBUG_TOOLBAR_CONFIG = {
 
 USE_WHITENOISE = env.bool("USE_WHITENOISE", default=False)
 WN_MIDDLEWARE = ('whitenoise.middleware.WhiteNoiseMiddleware',) if USE_WHITENOISE else tuple()
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
 ) + WN_MIDDLEWARE + (
     'django.contrib.sessions.middleware.SessionMiddleware',
