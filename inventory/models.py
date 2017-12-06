@@ -13,6 +13,7 @@ from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 
 from events.models import Location
+from accounts.models import get_default_user
 
 GLOBAL_LOC_DEFAULT = {'name': "Office", "building__name": "Campus Center"}
 GLOBAL_STATUS_DEFAULT = {'name': "Available"}
@@ -170,7 +171,7 @@ class EquipmentItem(MPTTModel):
 @python_2_unicode_compatible
 class EquipmentClass(models.Model):
     name = models.CharField(max_length=190)
-    category = TreeForeignKey(EquipmentCategory, null=False, blank=False, on_delete=models.SET_NULL)
+    category = TreeForeignKey(EquipmentCategory, null=False, blank=False, on_delete=models.PROTECT)
     description = models.TextField(help_text="Function, appearance, and included acessories", null=True, blank=True)
     value = models.DecimalField(help_text="Estimated purchase value", max_digits=9, decimal_places=2,
                                 null=True, blank=True)
@@ -224,7 +225,7 @@ class EquipmentStatus(models.Model):
 class EquipmentMaintEntry(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.SET_NULL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=False, blank=False, on_delete=models.SET(get_default_user))
 
     title = models.CharField(max_length=32, null=False, blank=False)
     entry = models.TextField(null=True, blank=True)

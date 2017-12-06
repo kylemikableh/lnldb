@@ -9,6 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django_extensions.db.models import TimeStampedModel
 
 from events.models import Event
+from accounts.models import get_default_user
 
 
 def get_default_email():
@@ -103,7 +104,7 @@ class MtgAttachment(TimeStampedModel):
     glyphicon = 'paperclip'
     name = models.CharField(max_length=64, null=False, blank=False)
     file = models.FileField(upload_to=mtg_attachment_file_name, blank=False, null=False)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, editable=False, null=False, on_delete=models.SET_NULL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, editable=False, null=False, on_delete=models.SET(get_default_user))
     meeting = models.ForeignKey(Meeting, related_name='attachments', null=True, on_delete=models.CASCADE)
     private = models.BooleanField(default=False)
 

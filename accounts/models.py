@@ -6,6 +6,9 @@ from django.utils.six import python_2_unicode_compatible
 
 from events.models import Organization
 
+# for bits where a nu
+def get_default_user():
+    return get_user_model().objects.get_or_create(username="nobody")[0]
 
 # from django_custom_user_migration.models import AbstractUser
 
