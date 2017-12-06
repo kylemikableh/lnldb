@@ -51,6 +51,7 @@ sqlparse==0.2.3
 tolerance==0.1.2
 wheel==0.24.0
 xhtml2pdf==0.2b1
-django-cas-ng==3.5.8
+#django-cas-ng==3.5.8
+-e git+https://github.com/WPI-LNL/django-cas-ng.git@fix_fk#egg=django-cas-ng
 ldap3==1.4.0
 django-environ==0.4.3
