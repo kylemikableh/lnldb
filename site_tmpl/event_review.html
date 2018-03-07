@@ -7,23 +7,40 @@
 <h1>{{ h2 }}</h1>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <h2><em>"{{ event.event_name }}"</em></h2>
-    </div>
-    <div class="col-md-4">
-        <h2>
-            Contact: {% if event.contact %}
-            <a href="{% url "accounts:detail" event.contact.id %}">{{ event.contact.get_full_name }}</a>{% else %}No
-            Contact Set {% endif %}
-            <br/>
-            Client(s) {% for org in event.org.all %}<span class="text-muted"><a href="{% url "orgs:detail" org.id %}">{{ org.retname }} </a>Last Verified: {% if org.verifications.exists %} {{ org.verifications.latest.date }} {% else %} Never {% endif %}</span>{% endfor %}
-        </h2>
-    </div>
-    <div class="col-md-4">
         <h3>
-            Started: {{ event.datetime_start }} <br />
+            {{ event.location }}<br />
+            Started: {{ event.datetime_start }}<br />
             Ended: {{ event.datetime_end }}
         </h3>
+        <h2>
+            Contact: {% if event.contact %}
+            <a href="{% url "accounts:detail" event.contact.id %}">{{ event.contact.get_full_name }}</a>
+            {% else %}No Contact Set {% endif %}
+        </h2>
+    </div>
+    <div class="col-md-6">
+        <h2>
+            <div class="panel panel-default">
+                <div class="panel-heading">Client(s)</div>
+                <ul class="list-group">
+                    {% for org in event.org.all %}
+                    <li class="list-group-item">
+                        <a href="{% url "orgs:detail" org.id %}">{{ org.retname }}</a><br />
+                        <span class="text-muted small">
+                        {% for fund in org.accounts.all %}
+                            {{ fund }}<br />
+                        {% endfor %}
+                        Last Verified: {% if org.verifications.exists %} {{ org.verifications.latest.date }} {% else %} Never {% endif %}
+                        </span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item list-group-item-secondary">None set</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </h2>
     </div>
 </div>
 <hr>
