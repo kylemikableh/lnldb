@@ -26,17 +26,21 @@
                 <div class="panel-heading">Client(s)</div>
                 <ul class="list-group">
                     {% for org in event.org.all %}
-                    <li class="list-group-item">
-                        <a href="{% url "orgs:detail" org.id %}">{{ org.retname }}</a><br />
-                        <span class="text-muted small">
-                        {% for fund in org.accounts.all %}
-                            {{ fund }}<br />
-                        {% endfor %}
-                        Last Verified: {% if org.verifications.exists %} {{ org.verifications.latest.date }} {% else %} Never {% endif %}
-                        </span>
-                    </li>
+                        <li class="list-group-item">
+                            <a href="{% url "orgs:detail" org.id %}">{{ org.retname }}</a><br />
+                            <span class="text-muted small">
+                            {% for fund in org.accounts.all %}
+                                {% if fund == event.billing_fund %}
+                                    <mark>{{ fund }}</mark><br />
+                                {% else %}
+                                    {{ fund }}<br />
+                                {% endif %}
+                            {% endfor %}
+                            Last Verified: {% if org.verifications.exists %} {{ org.verifications.latest.date }} {% else %} Never {% endif %}
+                            </span>
+                        </li>
                     {% empty %}
-                    <li class="list-group-item list-group-item-secondary">None set</li>
+                        <li class="list-group-item list-group-item-secondary">None set</li>
                     {% endfor %}
                 </ul>
             </div>
