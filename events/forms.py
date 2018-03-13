@@ -222,6 +222,7 @@ class EventApprovalForm(forms.ModelForm):
                     Field('datetime_start', label="Event Start", css_class="dtp"),
                     Field('datetime_end', label="Event End", css_class="dtp"),
                     Field('org'),
+                    Field('billing_org'),
                     Field('billing_fund'),
                     Field('billed_by_semester', label="Billed by semester (for films)"),
                     # Field('datetime_setup_start',label="Setup Start",css_class="dtp"),
@@ -247,9 +248,9 @@ class EventApprovalForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['description', 'internal_notes', 'datetime_start', 'datetime_end', 'billing_fund',
-                  'billed_by_semester', 'datetime_setup_complete', 'lighting', 'lighting_reqs',
-                  'sound', 'sound_reqs', 'projection', 'proj_reqs', 'otherservices', 'otherservice_reqs', 'org']
+        fields = ['description', 'internal_notes', 'datetime_start', 'datetime_end', 'org', 'billing_org',
+                  'billing_fund', 'billed_by_semester', 'datetime_setup_complete', 'lighting', 'lighting_reqs',
+                  'sound', 'sound_reqs', 'projection', 'proj_reqs', 'otherservices', 'otherservice_reqs']
         widgets = {
             'description': PagedownWidget(),
             'internal_notes': PagedownWidget,
@@ -259,8 +260,9 @@ class EventApprovalForm(forms.ModelForm):
             'otherservice_reqs': PagedownWidget()
         }
 
-    org = AutoCompleteSelectMultipleField('Orgs', required=False, label="Client")
-    billing_fund = AutoCompleteSelectField("Funds", required=False)
+    org = AutoCompleteSelectMultipleField('Orgs', required=False, label='Client(s)')
+    billing_org = AutoCompleteSelectField('Funds', required=False, label='Client to bill')
+    billing_fund = AutoCompleteSelectField('Funds', required=False)
     datetime_start = forms.SplitDateTimeField(initial=timezone.now, label="Event Start")
     datetime_end = forms.SplitDateTimeField(initial=timezone.now, label="Event End")
     # datetime_setup_start =  forms.SplitDateTimeField(initial=timezone.now)
@@ -333,6 +335,7 @@ class InternalEventForm(FieldAccessForm):
                     # 'person_name',
                     'contact',
                     'org',
+                    DynamicFieldContainer('billing_org'),
                     DynamicFieldContainer('billing_fund'),
                 ),
                 Tab(
@@ -422,12 +425,12 @@ class InternalEventForm(FieldAccessForm):
 
         billing_edit = FieldAccessLevel(
             lambda user, instance: user.has_perm('events.edit_event_fund', instance),
-            enable=('billing_fund', 'billed_by_semester')
+            enable=('billing_org', 'billing_fund', 'billed_by_semester')
         )
 
         billing_view = FieldAccessLevel(
             lambda user, instance: not user.has_perm('events.view_event_billing', instance),
-            exclude=('billing_fund', 'billed_by_semester')
+            exclude=('billing_org', 'billing_fund', 'billed_by_semester')
         )
 
         change_flags = FieldAccessLevel(
@@ -456,8 +459,9 @@ class InternalEventForm(FieldAccessForm):
         group_label=lambda group: group.name,
     )
     contact = AutoCompleteSelectField('Users', required=False)
+    org = AutoCompleteSelectMultipleField('Orgs', required=False, label="Client(s)")
+    billing_org = AutoCompleteSelectField('Orgs', required=False, label="Client to bill")
     billing_fund = AutoCompleteSelectField('Funds', required=False)
-    org = AutoCompleteSelectMultipleField('Orgs', required=False, label="Client")
 
     datetime_setup_complete = forms.SplitDateTimeField(initial=timezone.now, label="Setup Completed")
     datetime_start = forms.SplitDateTimeField(initial=timezone.now, label="Event Start")
@@ -471,12 +475,14 @@ class EventReviewForm(forms.ModelForm):
         self.helper.layout = Layout(
             HTML("<h5>If you'd like to override the billing org, please search for it below</h5>"),
             Field('billing_org'),
+            HTML("<h5>If you'd like to override the billing fund, please search for it below</h5>"),
+            Field('billing_fund'),
             Field('internal_notes', css_class="col-md-6", size="15"),
             FormActions(
                 HTML('<h4> Does this look good to you?</h4>'),
                 Submit('save', 'Yes!', css_class='btn btn-lg btn-danger'),
                 HTML(
-                    '<a class="btn btn-lg btn-success" href="{%% url "events:detail" %s %%}"> No... </a>'
+                    '<a class="btn btn-lg btn-success" href="{%% url "events:detail" %s %%}">No</a>'
                     % event.id),
             ),
         )
@@ -484,12 +490,13 @@ class EventReviewForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ('billing_org', 'internal_notes')
+        fields = ('billing_org', 'billing_fund', 'internal_notes')
         widgets = {
             'internal_notes': PagedownWidget()
         }
 
     billing_org = AutoCompleteSelectField('Orgs', required=False, label="")
+    billing_fund = AutoCompleteSelectField('Funds', required=False, label="")
 
 
 class InternalReportForm(FieldAccessForm):
