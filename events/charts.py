@@ -11,6 +11,7 @@ class SurveyVpChart(Chart):
     chart_type = 'line'
     scales = {
         'xAxes': [Axes(type='time', position='bottom')],
+        'yAxes': [Axes(ticks={'min': 0, 'max': 4})],
     }
 
     def get_datasets(self, *args, **kwargs):
@@ -31,8 +32,8 @@ class SurveyVpChart(Chart):
             data_bill_as_expected.append({'x': event.datetime_start.isoformat(), 'y': data['bill_as_expected__avg']})
         options = {'type': 'line', 'fill': False, 'lineTension': 0}
         return [
-            DataSet(label='Communication responsiveness', data=data_communication_responsiveness, borderColor='#8B0000', backgroundColor='#8B0000', **options),
-            DataSet(label='Bill as expected', data=data_bill_as_expected, borderColor='#66CDAA', backgroundColor='#66CDAA', **options),
+            DataSet(label='Communication responsiveness', data=data_communication_responsiveness, color=(193, 37, 82), **options),
+            DataSet(label='Bill as expected', data=data_bill_as_expected, color=(106, 150, 31), **options),
         ]
 
 
@@ -40,6 +41,7 @@ class SurveyCrewChart(Chart):
     chart_type = 'line'
     scales = {
         'xAxes': [Axes(type='time', position='bottom')],
+        'yAxes': [Axes(ticks={'min': 0, 'max': 4})],
     }
 
     def get_datasets(self, *args, **kwargs):
@@ -72,12 +74,12 @@ class SurveyCrewChart(Chart):
             data_crew_knowledgeability.append({'x': event.datetime_start.isoformat(), 'y': data['crew_knowledgeability__avg']})
         options = {'type': 'line', 'fill': False, 'lineTension': 0}
         return [
-            DataSet(label='Lighting quality', data=data_lighting_quality, borderColor='#F4A460', backgroundColor='#F4A460', **options),
-            DataSet(label='Sound quality', data=data_sound_quality, borderColor='#006400', backgroundColor='#006400', **options),
-            DataSet(label='Setup on time', data=data_setup_on_time, borderColor='#DB7093', backgroundColor='#DB7093', **options),
-            DataSet(label='Crew respectfulness', data=data_crew_respectfulness, borderColor='#FFE4B5', backgroundColor='#FFE4B5', **options),
-            DataSet(label='Crew preparedness', data=data_crew_preparedness, borderColor='#00008B', backgroundColor='#00008B', **options),
-            DataSet(label='Crew knowledgeability', data=data_crew_knowledgeability, borderColor='#9932CC', backgroundColor='#9932CC', **options),
+            DataSet(label='Lighting quality', data=data_lighting_quality, color=(193, 37, 82), **options),
+            DataSet(label='Sound quality', data=data_sound_quality, color=(255, 102, 0), **options),
+            DataSet(label='Setup on time', data=data_setup_on_time, color=(245, 199, 0), **options),
+            DataSet(label='Crew respectfulness', data=data_crew_respectfulness, color=(106, 150, 31), **options),
+            DataSet(label='Crew preparedness', data=data_crew_preparedness, color=(0, 133, 53), **options),
+            DataSet(label='Crew knowledgeability', data=data_crew_knowledgeability, color=(110, 45, 214), **options),
         ]
 
 
@@ -85,6 +87,7 @@ class SurveyPricelistChart(Chart):
     chart_type = 'line'
     scales = {
         'xAxes': [Axes(type='time', position='bottom')],
+        'yAxes': [Axes(ticks={'min': 0, 'max': 4})],
     }
 
     def get_datasets(self, *args, **kwargs):
@@ -108,9 +111,9 @@ class SurveyPricelistChart(Chart):
             data_price_appropriate.append({'x': event.datetime_start.isoformat(), 'y': data['price_appropriate__avg']})
         options = {'type': 'line', 'fill': False, 'lineTension': 0}
         return [
-            DataSet(label='Pricelist UX', data=data_pricelist_ux, borderColor='#D8BFD8', backgroundColor='#D8BFD8', **options),
-            DataSet(label='Quote as expected', data=data_quote_as_expected, borderColor='#696969', backgroundColor='#696969', **options),
-            DataSet(label='Price appropriate', data=data_price_appropriate, borderColor='#FF4500', backgroundColor='#FF4500', **options),
+            DataSet(label='Pricelist UX', data=data_pricelist_ux, color=(193, 37, 82), **options),
+            DataSet(label='Quote as expected', data=data_quote_as_expected, color=(245, 199, 0), **options),
+            DataSet(label='Price appropriate', data=data_price_appropriate, color=(0, 133, 53), **options),
         ]
 
 
@@ -118,6 +121,7 @@ class SurveyLnlChart(Chart):
     chart_type = 'line'
     scales = {
         'xAxes': [Axes(type='time', position='bottom')],
+        'yAxes': [Axes(ticks={'min': 0, 'max': 4})],
     }
 
     def get_datasets(self, *args, **kwargs):
@@ -138,6 +142,6 @@ class SurveyLnlChart(Chart):
             data_customer_would_return.append({'x': event.datetime_start.isoformat(), 'y': data['customer_would_return__avg']})
         options = {'type': 'line', 'fill': False, 'lineTension': 0}
         return [
-            DataSet(label='Services quality', data=data_services_quality, borderColor='#4682B4', backgroundColor='#4682B4', **options),
-            DataSet(label='Customer would return', data=data_customer_would_return, borderColor='#1E90FF', backgroundColor='#1E90FF', **options),
+            DataSet(label='Services quality', data=data_services_quality, color=(193, 37, 82), **options),
+            DataSet(label='Customer would return', data=data_customer_would_return, color=(106, 150, 31), **options),
         ]
