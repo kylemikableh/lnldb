@@ -8,10 +8,18 @@
             <h1>Survey dashboard</h1>
             <h2>Response rate</h2>
             <p>Of the {{ num_eligible_events }} billed events in the past year, {{ num_events }} ({{ response_rate|floatformat }}%) have at least one survey response.</p>
-            <h2>Legend</h2>
-            <p style="font-size:1.5em">&#x1f600;=good &#x1f610;=fair &#x1f641;=poor &#x1f621;=very poor &#x2620;=totally fucked &#x2753;=unknown</p>
+            <h2>VP</h2>
+            {{ chart_vp.as_html }}
+            <h2>Crew</h2>
+            {{ chart_crew.as_html }}
+            <h2>Pricelist</h2>
+            {{ chart_pricelist.as_html }}
+            <h2>LnL</h2>
+            {{ chart_lnl.as_html }}
         </div>
         <div class="col-md-6">
+            <h2>Legend</h2>
+            <p style="font-size:1.5em">&#x1f600;=good &#x1f610;=fair &#x1f641;=poor &#x1f621;=very poor &#x2620;=totally fucked &#x2753;=unknown</p>
             <h2>At a glance</h2>
             <table class="table">
                 <thead>

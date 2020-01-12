@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
+from events.charts import SurveyVpChart, SurveyCrewChart, SurveyPricelistChart, SurveyLnlChart
 from events.models import BaseEvent
 from helpers.challenges import is_officer
 
@@ -89,7 +90,7 @@ def event_search(request):
 def survey_dashboard(request):
     year_ago = timezone.now() - datetime.timedelta(days=365)
 
-    context = {}
+    context = {'chart_vp': SurveyVpChart(), 'chart_crew': SurveyCrewChart(), 'chart_pricelist': SurveyPricelistChart(), 'chart_lnl': SurveyLnlChart()}
     context['survey_composites'] = []
     context['wma'] = {
         'vp': 0,

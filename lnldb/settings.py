@@ -291,6 +291,7 @@ INSTALLED_APPS = (
     'pagedown',
     'compat',
     'polymorphic',
+    'jchart',
 )
 if TESTING:
     # bypass migrations for unit tests. **MUCH** faster
