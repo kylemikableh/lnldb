@@ -15,25 +15,21 @@ class SurveyVpChart(Chart):
     }
 
     def get_datasets(self, *args, **kwargs):
-        year_ago = timezone.now() - datetime.timedelta(days=365)
+        now = timezone.now()
+        year_ago = now - datetime.timedelta(days=365)
         events = BaseEvent.objects \
-            .filter(datetime_start__gte=year_ago) \
-            .filter(Q(billings__isnull=False) | Q(multibillings__isnull=False)) \
+            .filter(approved=True, datetime_start__gte=year_ago, datetime_end__lt=now) \
             .filter(surveys__isnull=False) \
             .distinct()
         data_communication_responsiveness = []
-        data_bill_as_expected = []
         for event in events:
             data = event.surveys.aggregate(
                 Avg('communication_responsiveness'),
-                Avg('bill_as_expected'),
             )
             data_communication_responsiveness.append({'x': event.datetime_start.isoformat(), 'y': data['communication_responsiveness__avg']})
-            data_bill_as_expected.append({'x': event.datetime_start.isoformat(), 'y': data['bill_as_expected__avg']})
         options = {'type': 'line', 'fill': False, 'lineTension': 0}
         return [
             DataSet(label='Communication responsiveness', data=data_communication_responsiveness, color=(193, 37, 82), **options),
-            DataSet(label='Bill as expected', data=data_bill_as_expected, color=(106, 150, 31), **options),
         ]
 
 
@@ -45,10 +41,10 @@ class SurveyCrewChart(Chart):
     }
 
     def get_datasets(self, *args, **kwargs):
-        year_ago = timezone.now() - datetime.timedelta(days=365)
+        now = timezone.now()
+        year_ago = now - datetime.timedelta(days=365)
         events = BaseEvent.objects \
-            .filter(datetime_start__gte=year_ago) \
-            .filter(Q(billings__isnull=False) | Q(multibillings__isnull=False)) \
+            .filter(approved=True, datetime_start__gte=year_ago, datetime_end__lt=now) \
             .filter(surveys__isnull=False) \
             .distinct()
         data_lighting_quality = []
@@ -91,10 +87,10 @@ class SurveyPricelistChart(Chart):
     }
 
     def get_datasets(self, *args, **kwargs):
-        year_ago = timezone.now() - datetime.timedelta(days=365)
+        now = timezone.now()
+        year_ago = now - datetime.timedelta(days=365)
         events = BaseEvent.objects \
-            .filter(datetime_start__gte=year_ago) \
-            .filter(Q(billings__isnull=False) | Q(multibillings__isnull=False)) \
+            .filter(approved=True, datetime_start__gte=year_ago, datetime_end__lt=now) \
             .filter(surveys__isnull=False) \
             .distinct()
         data_pricelist_ux = []
@@ -125,10 +121,10 @@ class SurveyLnlChart(Chart):
     }
 
     def get_datasets(self, *args, **kwargs):
-        year_ago = timezone.now() - datetime.timedelta(days=365)
+        now = timezone.now()
+        year_ago = now - datetime.timedelta(days=365)
         events = BaseEvent.objects \
-            .filter(datetime_start__gte=year_ago) \
-            .filter(Q(billings__isnull=False) | Q(multibillings__isnull=False)) \
+            .filter(approved=True, datetime_start__gte=year_ago, datetime_end__lt=now) \
             .filter(surveys__isnull=False) \
             .distinct()
         data_services_quality = []

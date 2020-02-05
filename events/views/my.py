@@ -20,6 +20,7 @@ from events.forms import (EditHoursForm, InternalReportForm, MKHoursForm,
                           PostEventSurveyForm)
 from events.models import CCReport, BaseEvent, Event, Hours, PostEventSurvey, CCR_DELTA
 from helpers.mixins import LoginRequiredMixin
+from helpers.revision import set_revision_comment
 from helpers.util import curry_class
 
 
@@ -342,16 +343,18 @@ class PostEventSurveyCreate(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(PostEventSurveyCreate, self).get_form_kwargs()
+        now = timezone.now()
         kwargs['event'] = get_object_or_404(
-            BaseEvent.objects.filter(Q(billings__isnull=False) | Q(multibillings__isnull=False)).exclude(closed=True),
+            BaseEvent.objects.exclude(closed=True).filter(approved=True, datetime_end__lt=now, datetime_end__gt=(now - datetime.timedelta(days=30))),
             pk=self.kwargs['eventid']
         )
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(PostEventSurveyCreate, self).get_context_data(**kwargs)
+        now = timezone.now()
         context['event'] = get_object_or_404(
-            BaseEvent.objects.filter(Q(billings__isnull=False) | Q(multibillings__isnull=False)).exclude(closed=True),
+            BaseEvent.objects.exclude(closed=True).filter(approved=True, datetime_end__lt=now, datetime_end__gt=(now - datetime.timedelta(days=30))),
             pk=self.kwargs['eventid']
         )
         return context
@@ -367,6 +370,7 @@ class PostEventSurveyCreate(LoginRequiredMixin, CreateView):
         result = super(PostEventSurveyCreate, self).form_valid(form)
         # Automatically add the survey-taker to the client (if the event has only one client)
         if obj.event.org.count() == 1 and obj.person not in obj.event.org.get().associated_users.all():
+            set_revision_comment('Took post-event survey for {}. User automatically added to client.'.format(self.object.event.event_name), None)
             obj.event.org.get().associated_users.add(obj.person)
         return result
 

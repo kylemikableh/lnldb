@@ -560,6 +560,7 @@ class InternalEventForm2019(FieldAccessForm):
                 'sensitive',
                 'test_event',
                 'entered_into_workday',
+                'send_survey',
                 active=True
             ),
             Tab(
@@ -653,11 +654,21 @@ class InternalEventForm2019(FieldAccessForm):
             enable=('entered_into_workday',)
         )
 
+        survey_edit = FieldAccessLevel(
+            lambda user, instance: user.has_perm('events.view_posteventsurvey') and not instance.survey_sent,
+            enable=('send_survey',)
+        )
+
+        survey_view = FieldAccessLevel(
+            lambda user, instance: not user.has_perm('events.view_posteventsurvey'),
+            exclude=('send_survey',)
+        )
+
     class Meta:
         model = Event2019
         fields = ('event_name', 'location', 'description', 'internal_notes', 'billing_org',
                   'billed_in_bulk', 'contact', 'org', 'datetime_setup_complete', 'datetime_start',
-                  'datetime_end', 'sensitive', 'test_event', 'entered_into_workday')
+                  'datetime_end', 'sensitive', 'test_event', 'entered_into_workday', 'send_survey')
         widgets = {
             'description': PagedownWidget(),
             'internal_notes': PagedownWidget,
@@ -1550,7 +1561,6 @@ class PostEventSurveyForm(forms.ModelForm):
                     'crew_preparedness',
                     'crew_knowledgeability',
                     'quote_as_expected',
-                    'bill_as_expected',
                     'price_appropriate',
                     'customer_would_return',
                     css_class='col'
@@ -1582,8 +1592,7 @@ class PostEventSurveyForm(forms.ModelForm):
         model = PostEventSurvey
         fields = ('services_quality', 'lighting_quality', 'sound_quality', 'work_order_method', 'work_order_experience',
         'communication_responsiveness', 'pricelist_ux', 'setup_on_time', 'crew_respectfulness', 'crew_preparedness',
-        'crew_knowledgeability', 'quote_as_expected', 'bill_as_expected', 'price_appropriate', 'customer_would_return',
-        'comments')
+        'crew_knowledgeability', 'quote_as_expected', 'price_appropriate', 'customer_would_return', 'comments')
 
     services_quality = forms.ChoiceField(
         label=PostEventSurvey._meta.get_field('services_quality').verbose_name,
@@ -1655,12 +1664,6 @@ class PostEventSurveyForm(forms.ModelForm):
         label=PostEventSurvey._meta.get_field('quote_as_expected').verbose_name,
         widget=SurveyCustomRadioSelect,
         choices=PostEventSurvey._meta.get_field('quote_as_expected').choices,
-    )
-
-    bill_as_expected = forms.ChoiceField(
-        label=PostEventSurvey._meta.get_field('bill_as_expected').verbose_name,
-        widget=SurveyCustomRadioSelect,
-        choices=PostEventSurvey._meta.get_field('bill_as_expected').choices,
     )
 
     price_appropriate = forms.ChoiceField(

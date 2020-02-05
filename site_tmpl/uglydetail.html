@@ -294,6 +294,20 @@
                                 <td> {{ event.billed_in_bulk }} </td>
                             </tr>
                         {% endpermission %}
+                        {% permission request.user has 'events.view_posteventsurvey' %}
+                            <tr>
+                                <th>Survey</th>
+                                <td>
+                                    {% if event.survey_sent %}
+                                        was sent
+                                    {% elif event.send_survey %}
+                                        will be sent
+                                    {% else %}
+                                        will not be sent
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endpermission %}
                         {% permission request.user has 'events.view_hidden_event' of event %}
                             {% if event.sensitive %}
                                 <tr>
@@ -936,11 +950,6 @@
                                     <td>{{ survey_results.quote_as_expected__verbose_name }}</td>
                                     <td>{{ survey_results.quote_as_expected__avg }}</td>
                                     <td>{{ survey_results.quote_as_expected__count }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ survey_results.bill_as_expected__verbose_name }}</td>
-                                    <td>{{ survey_results.bill_as_expected__avg }}</td>
-                                    <td>{{ survey_results.bill_as_expected__count }}</td>
                                 </tr>
                                 <tr>
                                     <td>{{ survey_results.price_appropriate__verbose_name }}</td>

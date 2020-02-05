@@ -17,7 +17,7 @@ from django.views.decorators.http import require_GET, require_POST
 from reversion.models import Version
 
 from emails.generators import (ReportReminderEmailGenerator, EventEmailGenerator, BillingEmailGenerator,
-                               DefaultLNLEmailGenerator as DLEG)
+                               DefaultLNLEmailGenerator as DLEG, send_survey_if_necessary)
 from events.forms import (AttachmentForm, BillingForm, BillingUpdateForm, MultiBillingForm,
                           MultiBillingUpdateForm, CCIForm, CrewAssign, EventApprovalForm,
                           EventDenialForm, EventReviewForm, ExtraForm, InternalReportForm, MKHoursForm,
@@ -640,6 +640,8 @@ def viewevent(request, id):
     if event.sensitive and not request.user.has_perm('events.view_hidden_event', event):
         raise PermissionDenied
 
+    send_survey_if_necessary(event)
+
     context['event'] = event
     # do not use .get_unique() because it does not follow relations
     context['history'] = Version.objects.get_for_object(event)
@@ -715,11 +717,6 @@ def viewevent(request, id):
             Count('quote_as_expected'),
         ))
         context['survey_results']['quote_as_expected__verbose_name'] = PostEventSurvey._meta.get_field('quote_as_expected').verbose_name
-        context['survey_results'].update(event.surveys.filter(bill_as_expected__gte=0).aggregate(
-            Avg('bill_as_expected'),
-            Count('bill_as_expected'),
-        ))
-        context['survey_results']['bill_as_expected__verbose_name'] = PostEventSurvey._meta.get_field('bill_as_expected').verbose_name
         context['survey_results'].update(event.surveys.filter(price_appropriate__gte=0).aggregate(
             Avg('price_appropriate'),
             Count('price_appropriate'),
@@ -732,10 +729,7 @@ def viewevent(request, id):
         context['survey_results']['customer_would_return__verbose_name'] = PostEventSurvey._meta.get_field('customer_would_return').verbose_name
         context['survey_composites'] = {}
         try:
-            context['survey_composites']['vp'] = max(min((
-                context['survey_results']['communication_responsiveness__avg'] +
-                context['survey_results']['bill_as_expected__avg']
-            ) - 3, 4), 0)
+            context['survey_composites']['vp'] = context['survey_results']['communication_responsiveness__avg']
         except TypeError:
             context['survey_composites']['vp'] = None
         try:

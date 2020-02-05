@@ -780,6 +780,8 @@ class Event2019(BaseEvent):
     """
         New events under the 2019 pricelist
     """
+
+    # Workday billing
     workday_fund = models.IntegerField(null=True, blank=True, choices=(
         (810, 'Student Organization (810-FD)'),
         (110, 'Operating (110-FD)'),
@@ -794,6 +796,10 @@ class Event2019(BaseEvent):
     workday_form_comments = models.TextField(null=True, blank=True)
     workday_entered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="workdayentries", null=True, blank=True)
     entered_into_workday = models.BooleanField(default=False, help_text='Checked when the Treasurer has created an Internal Service Delivery in Workday for this event')
+
+    # Post-event survey
+    send_survey = models.BooleanField(default=False, help_text='Check if the event contact should be emailed the post-event survey after the event')
+    survey_sent = models.BooleanField(default=False, help_text='The post-event survey has been sent to the client')
 
     @property
     def has_projection(self):
@@ -1363,7 +1369,6 @@ class PostEventSurvey(models.Model):
     crew_preparedness = models.IntegerField(choices=AGREEMENT_CHOICES, verbose_name='The crew was prepared.')
     crew_knowledgeability = models.IntegerField(choices=AGREEMENT_CHOICES, verbose_name='The crew was knowledgeable.')
     quote_as_expected = models.IntegerField(choices=AGREEMENT_CHOICES, verbose_name='The price quoted for the event matched my expectations.')
-    bill_as_expected = models.IntegerField(choices=AGREEMENT_CHOICES, verbose_name='The charges on the invoice matched my expectations.')
     price_appropriate = models.IntegerField(choices=AGREEMENT_CHOICES, verbose_name='The price is appropriate for the services provided.')
     customer_would_return = models.IntegerField(choices=AGREEMENT_CHOICES, verbose_name='I would use Lens and Lights in the future.')
 
