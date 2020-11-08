@@ -16,7 +16,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls.base import reverse
 from django.utils import timezone
 from django.views import generic
-from django_cas_ng.views import login as cas_login
+from django_cas_ng.views import LoginView as cas_login
 from django_saml2_auth.views import signin as saml_login
 
 from data.forms import form_footer
@@ -87,7 +87,7 @@ class UserDetailView(mixins.HasPermOrTestMixin, generic.DetailView):
     slug_url_kwarg = "username"
     model = get_user_model()
     template_name = "userdetail.html"
-    perms = ['accounts.read_user']
+    perms = ['accounts.view_user']
 
     def user_passes_test(self, request, *args, **kwargs):
         # members looking at other members is fine, and you should always be able to look at yourself.
@@ -97,7 +97,7 @@ class UserDetailView(mixins.HasPermOrTestMixin, generic.DetailView):
         if object.is_lnl:
             return request.user.has_perm('accounts.view_member')
         else:
-            return request.user.has_perm('accounts.read_user', object)
+            return request.user.has_perm('accounts.view_user', object)
 
     def get_context_data(self, **kwargs):
         context = super(UserDetailView, self).get_context_data(**kwargs)
@@ -136,7 +136,7 @@ class BaseUserList(mixins.HasPermMixin, generic.ListView):
     context_object_name = 'users'
     template_name = 'users.html'
     name = "User List"
-    perms = ['accounts.read_user']
+    perms = ['accounts.view_user']
 
     def get_context_data(self, **kwargs):
         context = super(BaseUserList, self).get_context_data(**kwargs)
@@ -217,20 +217,20 @@ class MeDirectView(generic.RedirectView):
 def smart_login(request):
     pref_saml = request.COOKIES.get('prefer_saml', None)
     use_saml = request.GET.get('force_saml', None)
-    pref_cas = request.COOKIES.get('prefer_cas', None)
-    use_cas = request.GET.get('force_cas', None)
+    # pref_cas = request.COOKIES.get('prefer_cas', None)
+    # use_cas = request.GET.get('force_cas', None)
 
     next_url = request.GET.get('next', reverse('home'))
     if request.user.is_authenticated:
         return HttpResponseRedirect(next_url)
     if settings.SAML2_ENABLED and use_saml == "true":
         return saml_login(request)
-    if settings.USE_CAS and (use_cas == "true" or "ticket" in request.GET):
-        return cas_login(request, next_url)
+    # if settings.USE_CAS and (use_cas == "true" or "ticket" in request.GET):
+    #     return cas_login(request, next_url)
     if settings.SAML2_ENABLED and pref_saml == "true":
         return saml_login(request)
-    if settings.USE_CAS and pref_cas == "true":
-        return cas_login(request, next_url)
+    # if settings.USE_CAS and pref_cas == "true":
+    #     return cas_login(request, next_url)
     else:
         return LoginView.as_view(template_name='registration/login.html', authentication_form=forms.LoginForm)(request)
 
